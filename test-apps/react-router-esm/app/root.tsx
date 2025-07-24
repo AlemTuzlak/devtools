@@ -1,3 +1,4 @@
+
 import {
   Links,
   Meta,
@@ -19,6 +20,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
+
       </body>
     </html>
   );
