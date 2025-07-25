@@ -1,38 +1,29 @@
-import { createSignal, JSX } from "solid-js"
-
-interface CheckboxProps extends Omit<JSX.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange"> {
-	onChange?: (checked: boolean) => void
+interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value"> {
+	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 	id: string
-	children: JSX.Element
+	children: React.ReactNode
 	value?: boolean
 	hint?: string
 }
 
-const Checkbox = (props: CheckboxProps) => {
-	const [checked, setChecked] = createSignal(props.value || false)
-
-	const handleChange = (e: Event) => {
-		const target = e.target as HTMLInputElement
-		const newChecked = target.checked
-		setChecked(newChecked)
-		props.onChange?.(newChecked)
-	}
-
+const Checkbox = ({ onChange, id, children, value, hint, ...props }: CheckboxProps) => {
 	return (
 		<div>
-			<label class="text-md cursor-pointer" for={props.id}>
-				<div class="flex items-center gap-2 py-1">
+			<label className="text-md cursor-pointer" htmlFor={id}>
+				<div className="flex items-center gap-2 py-1">
 					<input
-						checked={checked()}
-						onChange={handleChange}
-						id={props.id}
+						value={value ? "checked" : undefined}
+						checked={value}
+						onChange={onChange}
+						id={id}
 						type="checkbox"
 						{...props}
 					/>
-					{props.children}
+
+					{children}
 				</div>
 			</label>
-			{props.hint && <p class="text-sm text-gray-500">{props.hint}</p>}
+			{hint && <p className="text-sm text-gray-500">{hint}</p>}
 		</div>
 	)
 }

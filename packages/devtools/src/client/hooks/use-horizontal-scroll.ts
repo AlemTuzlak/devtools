@@ -1,12 +1,10 @@
-import { createSignal, createEffect, onCleanup } from "solid-js"
+import { useEffect, useRef } from "react"
 
 export const useHorizontalScroll = () => {
-	const [ref, setRef] = createSignal<HTMLDivElement | null>(null)
+	const ref = useRef<HTMLDivElement | null>(null)
 
-	createEffect(() => {
-		const elem = ref()
-		if (!elem) return
-
+	useEffect(() => {
+		const elem = ref.current
 		const onWheel = (ev: WheelEvent) => {
 			if (!elem || ev.deltaY === 0) return
 
@@ -16,12 +14,12 @@ export const useHorizontalScroll = () => {
 			})
 		}
 
-		elem.addEventListener("wheel", onWheel, { passive: true })
+		elem?.addEventListener("wheel", onWheel, { passive: true })
 
-		onCleanup(() => {
-			elem.removeEventListener("wheel", onWheel)
-		})
-	})
+		return () => {
+			elem?.removeEventListener("wheel", onWheel)
+		}
+	}, [])
 
-	return setRef
+	return ref
 }

@@ -1,18 +1,19 @@
-import { createMemo } from "solid-js"
+import { useMemo } from "react"
 import { useSettingsContext } from "../context/use-devtools-shell-context"
 import { tabs } from "../tabs"
 
 export const useTabs = () => {
 	const { settings } = useSettingsContext()
+	const { activeTab } = settings
 
-	const Component = createMemo(() => {
-		const tab = tabs.find((tab) => tab.id === settings().activeTab)
-		return tab?.component || (() => <></>)
-	})
+	const { Component } = useMemo(() => {
+		const tab = tabs.find((tab) => tab.id === activeTab)
+		return { Component: tab?.component }
+	}, [activeTab])
 
 	return {
 		tabs,
 		Component,
-		activeTab: () => settings().activeTab,
+		activeTab,
 	}
 }

@@ -1,4 +1,4 @@
-import { createSignal, createEffect, onCleanup } from "solid-js"
+import React from "react"
 
 // biome-ignore lint/suspicious/noExplicitAny: we don't care about types here
 function debounce(func: (...args: any[]) => any, timeout = 300) {
@@ -7,6 +7,7 @@ function debounce(func: (...args: any[]) => any, timeout = 300) {
 	return (...args: any[]) => {
 		clearTimeout(timer)
 		timer = setTimeout(() => {
+			/* @ts-ignore */
 			func.apply(this, args)
 		}, timeout)
 	}
@@ -14,6 +15,9 @@ function debounce(func: (...args: any[]) => any, timeout = 300) {
 
 // biome-ignore lint/suspicious/noExplicitAny: we don't care about types here
 export function useDebounce(callback: (...args: any[]) => void, delay = 300) {
-	const [debouncedCallback] = createSignal(debounce(callback, delay))
-	return debouncedCallback()
+	const callbackRef = React.useRef(callback)
+	React.useEffect(() => {
+		callbackRef.current = callback
+	})
+	return React.useMemo(() => debounce((...args) => callbackRef.current(...args), delay), [delay])
 }

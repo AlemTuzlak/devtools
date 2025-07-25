@@ -11,8 +11,7 @@
 		"rootDir": ".",
 		"outDir": "./dist",
 		"noEmit": true,
-		"jsx": "preserve",
-		"jsxImportSource": "solid-js"
+		"jsx": "react-jsx"
 	},
 	"include": ["src/**/*", "tests/**/*"],
 	"exclude": ["node_modules", "dist"]

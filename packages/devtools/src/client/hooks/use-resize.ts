@@ -1,48 +1,56 @@
-import { createSignal, createEffect, onCleanup } from "solid-js"
+import { useCallback, useEffect, useState } from "react"
 import { useSettingsContext } from "../context/use-devtools-shell-context"
 
 const useResize = () => {
 	const { setSettings, settings } = useSettingsContext()
-	const [isResizing, setIsResizing] = createSignal(false)
+	const { height, maxHeight, minHeight, panelLocation } = settings
+	const [isResizing, setIsResizing] = useState(false)
 
-	const enableResize = () => {
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const enableResize = useCallback(() => {
 		setIsResizing(true)
-	}
+	}, [setIsResizing])
 
-	const disableResize = () => {
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const disableResize = useCallback(() => {
 		setIsResizing(false)
-	}
+	}, [setIsResizing])
 
-	const resize = (e: MouseEvent) => {
-		if (isResizing()) {
-			window.getSelection()?.removeAllRanges() // Prevent text selection
-			const newHeight = settings().panelLocation === "top" ? e.clientY : window.innerHeight - e.clientY
+	const resize = useCallback(
+		(e: MouseEvent) => {
+			if (isResizing) {
+				window.getSelection()?.removeAllRanges() // Prevent text selection
+				const newHeight = panelLocation === "top" ? e.clientY : window.innerHeight - e.clientY // Calculate the new height based on the mouse position
 
-			if (newHeight > settings().maxHeight) {
-				setSettings({ height: settings().maxHeight })
-				return
+				//const newHeight = e.clientY; // You may want to add some offset here from props
+
+				if (newHeight > maxHeight) {
+					setSettings({ height: maxHeight })
+					return
+				}
+
+				if (newHeight < minHeight) {
+					setSettings({ height: minHeight })
+					return
+				}
+
+				setSettings({ height: newHeight })
 			}
+		},
+		[isResizing, maxHeight, minHeight, setSettings, panelLocation]
+	)
 
-			if (newHeight < settings().minHeight) {
-				setSettings({ height: settings().minHeight })
-				return
-			}
-
-			setSettings({ height: newHeight })
-		}
-	}
-
-	createEffect(() => {
+	useEffect(() => {
 		document.addEventListener("mousemove", resize)
 		document.addEventListener("mouseup", disableResize)
 
-		onCleanup(() => {
+		return () => {
 			document.removeEventListener("mousemove", resize)
 			document.removeEventListener("mouseup", disableResize)
-		})
-	})
+		}
+	}, [disableResize, resize])
 
-	return { enableResize, disableResize, isResizing }
+	return { height, enableResize, disableResize, isResizing }
 }
 
 export { useResize }

@@ -1,4 +1,4 @@
-import { createEffect } from "solid-js"
+import { useEffect } from "react"
 import { TANSTACK_DEVTOOLS } from "../utils/storage"
 
 const recursivelyChangeTabIndex = (node: Element | HTMLElement, remove = true) => {
@@ -12,10 +12,10 @@ const recursivelyChangeTabIndex = (node: Element | HTMLElement, remove = true) =
 	}
 }
 
-export const useDisableTabbing = (isOpen: () => boolean) => {
-	createEffect(() => {
+export const useDisableTabbing = (isOpen: boolean) => {
+	useEffect(() => {
 		const el = document.getElementById(TANSTACK_DEVTOOLS)
 		if (!el) return
-		recursivelyChangeTabIndex(el, !isOpen())
-	})
+		recursivelyChangeTabIndex(el, !isOpen)
+	}, [isOpen])
 }
