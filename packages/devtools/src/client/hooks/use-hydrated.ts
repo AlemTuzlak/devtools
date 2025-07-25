@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react"
+import { createSignal, onMount } from "solid-js"
 
 let hydrating = true
 
-export function useHydrated() {
-	const [hydrated, setHydrated] = useState(() => !hydrating)
+export function createHydrated() {
+	const [hydrated, setHydrated] = createSignal(!hydrating)
 
-	useEffect(function hydrate() {
+	onMount(() => {
 		hydrating = false
 		setHydrated(true)
-	}, [])
+	})
 
 	return hydrated
 }

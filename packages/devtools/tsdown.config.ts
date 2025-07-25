@@ -2,14 +2,15 @@ import postcss from "rollup-plugin-postcss"
 import tailwind from "tailwindcss"
 import nesting from "tailwindcss/nesting"
 import { defineConfig } from "tsdown"
+import solid from "vite-plugin-solid"
 import config from "./tailwind.config.js"
-
 export default defineConfig({
 	entry: ["src/index.ts"],
 	sourcemap: true,
 	dts: true,
 	minify: false,
 	plugins: [
+		solid(),
 		postcss({
 			extensions: [".css"],
 			extract: true,

@@ -65,7 +65,7 @@ export type DevtoolsState = {
 
 export const initialState: DevtoolsState = {
 	settings: {
-		activeTab: "page",
+		activeTab: "pages",
 		height: 400,
 		maxHeight: 600,
 		minHeight: 200,
@@ -73,7 +73,6 @@ export const initialState: DevtoolsState = {
 		hideUntilHover: false,
 		position: "bottom-right",
 		expansionLevel: 1,
-
 		panelLocation: "bottom",
 		openHotkey: "shift+a",
 		requireUrlFlag: false,
@@ -81,59 +80,4 @@ export const initialState: DevtoolsState = {
 	},
 	activePlugin: undefined,
 	persistOpen: false,
-}
-
-type SetWholeState = {
-	type: "SET_WHOLE_STATE"
-	payload: DevtoolsState
-}
-
-type SetActivePlugin = {
-	type: "SET_ACTIVE_PLUGIN"
-	payload: Plugin | undefined
-}
-
-type SetSettings = {
-	type: "SET_SETTINGS"
-	payload: Partial<DevtoolsState["settings"]>
-}
-
-type SetPersistOpenAction = {
-	type: "SET_PERSIST_OPEN"
-	payload: boolean
-}
-
-/** Aggregate of all action types */
-export type ReactRouterDevtoolsActions = SetSettings | SetWholeState | SetPersistOpenAction | SetActivePlugin
-
-export const shellReducer = (state: DevtoolsState, { type, payload }: ReactRouterDevtoolsActions): DevtoolsState => {
-	switch (type) {
-		case "SET_SETTINGS":
-			return {
-				...state,
-				settings: {
-					...state.settings,
-					...payload,
-				},
-			}
-		case "SET_ACTIVE_PLUGIN":
-			return {
-				...state,
-				activePlugin: payload,
-			}
-
-		case "SET_WHOLE_STATE": {
-			return {
-				...payload,
-			}
-		}
-
-		case "SET_PERSIST_OPEN":
-			return {
-				...state,
-				persistOpen: payload,
-			}
-		default:
-			return state
-	}
 }
