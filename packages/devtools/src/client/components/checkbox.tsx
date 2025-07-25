@@ -3,6 +3,7 @@ import { Show } from "solid-js"
 interface CheckboxProps {
 	onChange?: (e: Event) => void
 	id: string
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	children: any
 	value?: boolean
 	hint?: string

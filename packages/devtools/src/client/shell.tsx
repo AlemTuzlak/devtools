@@ -1,4 +1,4 @@
-import { createSignal, createEffect, onMount } from "solid-js"
+import { Show, createEffect, createSignal } from "solid-js"
 import { Portal } from "solid-js/web"
 import { ContentPanel } from "./components/content-panel"
 import { MainPanel } from "./components/main-panel"
@@ -35,33 +35,37 @@ const DevTools = () => {
 	createEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			const hotkey = settings().openHotkey
-			const [modifier, key] = hotkey.split('+')
-			
+			const [modifier, key] = hotkey.split("+")
+
 			// Check for hotkey combination
 			if (
-				((modifier === 'shift' && e.shiftKey) || 
-				 (modifier === 'ctrl' && e.ctrlKey) || 
-				 (modifier === 'alt' && e.altKey)) &&
+				((modifier === "shift" && e.shiftKey) ||
+					(modifier === "ctrl" && e.ctrlKey) ||
+					(modifier === "alt" && e.altKey)) &&
 				e.key.toLowerCase() === key.toLowerCase()
 			) {
 				e.preventDefault()
 				debounceSetOpen()
 			}
-			
+
 			// Handle escape key
-			if (e.key === 'Escape' && isOpen()) {
+			if (e.key === "Escape" && isOpen()) {
 				debounceSetOpen()
 			}
 		}
-		
-		document.addEventListener('keydown', handleKeyDown)
-		return () => document.removeEventListener('keydown', handleKeyDown)
+
+		document.addEventListener("keydown", handleKeyDown)
+		return () => document.removeEventListener("keydown", handleKeyDown)
 	})
 
 	useDisableTabbing(isOpen)
-	
+
 	createEffect(() => {
-		if (settings().requireUrlFlag && typeof window !== "undefined" && !window.location.href.includes(settings().urlFlag))
+		if (
+			settings().requireUrlFlag &&
+			typeof window !== "undefined" &&
+			!window.location.href.includes(settings().urlFlag)
+		)
 			return null
 	})
 
@@ -80,7 +84,7 @@ const DevTools = () => {
 
 export const Shell = (props: TanstackDevtoolsProps) => {
 	const hydrated = createHydrated()
-	
+
 	return (
 		<Show when={hydrated()}>
 			<ShellContextProvider plugins={props.plugins} config={props.config}>

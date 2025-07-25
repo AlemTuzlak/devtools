@@ -1,5 +1,5 @@
-import type { Accessor, Setter } from "solid-js"
-import { createContext, createEffect, createSignal, useContext } from "solid-js"
+import type { Setter } from "solid-js"
+import { createContext, createEffect } from "solid-js"
 import { createStore } from "solid-js/store"
 
 import type { TanstackDevtoolsProps } from "../shell.js"
@@ -18,6 +18,7 @@ export const ShellContext = createContext<{
 }>()
 
 interface ContextProps {
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	children: any
 	plugins?: TanstackDevtoolsProps["plugins"]
 	config?: ShellClientConfig
@@ -78,9 +79,5 @@ export const ShellContextProvider = (props: ContextProps) => {
 		setState,
 	}
 
-	return (
-		<ShellContext.Provider value={value}>
-			{props.children}
-		</ShellContext.Provider>
-	)
+	return <ShellContext.Provider value={value}>{props.children}</ShellContext.Provider>
 }

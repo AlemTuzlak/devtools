@@ -8,6 +8,7 @@ export const tabs = [
 		name: "Pages",
 		component: <PagesTab />,
 		icon: (
+			// biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="24"
@@ -28,6 +29,7 @@ export const tabs = [
 	{
 		name: "Settings",
 		icon: (
+			// biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="24"
@@ -71,7 +73,6 @@ export type Tabs = (typeof tabs)[number]["id"]
 
 export interface Plugin {
 	name: string | JSX.Element
-	icon: JSX.Element
 	id: string
 	component: (el: HTMLDivElement) => void
 }

@@ -1,4 +1,4 @@
-import { createEffect, For, Show } from "solid-js"
+import { For, createEffect } from "solid-js"
 import { usePlugins } from "../context/use-devtools-shell-context"
 
 export const PagesTab = () => {
@@ -7,7 +7,7 @@ export const PagesTab = () => {
 
 	createEffect(() => {
 		if (activePlugin() && ref) {
-			activePlugin()!.component(ref)
+			activePlugin()?.component(ref)
 		}
 	})
 
@@ -34,7 +34,12 @@ export const PagesTab = () => {
 					</div>
 				</div>
 			</div>
-			<div class="w-full h-full overflow-y-auto first:h-full" ref={ref} />
+			<div
+				class="w-full h-full overflow-y-auto first:h-full"
+				ref={(el) => {
+					ref = el
+				}}
+			/>
 		</div>
 	)
 }

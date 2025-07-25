@@ -6,7 +6,7 @@ interface LogoProps extends JSX.SvgSVGAttributes<SVGSVGElement> {
 
 const Logo = (props: LogoProps) => {
 	return (
-		<svg {...props} xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 634 633" viewBox="0 0 634 633">
+		<svg {...props} xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 634 633" viewBox="0 0 634 633">
 			<title>Devtools logo</title>
 			<g transform="translate(1)">
 				<linearGradient

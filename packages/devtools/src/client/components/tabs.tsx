@@ -1,4 +1,4 @@
-import { For, Show } from "solid-js"
+import { For } from "solid-js"
 import { usePersistOpen, useSettingsContext } from "../context/use-devtools-shell-context"
 import { useHorizontalScroll } from "../hooks/use-horizontal-scroll"
 import { useTabs } from "../hooks/use-tabs"
@@ -16,7 +16,7 @@ const Tab = (props: {
 	onClick?: () => void
 }) => {
 	const { setSettings } = useSettingsContext()
-	
+
 	const handleClick = () => {
 		if (props.onClick) {
 			props.onClick()
@@ -24,10 +24,11 @@ const Tab = (props: {
 			setSettings({ activeTab: props.tab.id as TabsType })
 		}
 	}
-	
+
 	const isActive = () => props.activeTab === props.tab.id
-	
+
 	return (
+		// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
 		<div
 			data-testid={props.tab.id}
 			onClick={handleClick}
@@ -69,6 +70,7 @@ export const Tabs = (props: TabsProps) => {
 						class="hover:text-red-600"
 						tab={{
 							icon: (
+								// biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="24"
@@ -86,7 +88,7 @@ export const Tabs = (props: TabsProps) => {
 							),
 							id: "close",
 							name: "Close",
-							component: <></>,
+							component: <div />,
 						}}
 						onClick={() => {
 							setPersistOpen(false)

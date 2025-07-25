@@ -1,4 +1,4 @@
-import { useContext, createMemo } from "solid-js"
+import { createMemo, useContext } from "solid-js"
 import type { Plugin } from "../tabs/index.js"
 import { ShellContext } from "./shell-context.js"
 import type { DevtoolsState } from "./shell-reducer.js"
@@ -17,38 +17,50 @@ const useDevtoolsShellContext = () => {
 
 export const usePlugins = () => {
 	const { state, setState } = useDevtoolsShellContext()
-	
+
 	const plugins = createMemo(() => state.plugins)
 	const activePlugin = createMemo(() => state.activePlugin)
-	
+
 	const setActivePlugin = (plugin: Plugin) => {
-		setState("activePlugin", plugin)
+		setState((prev) => ({
+			...prev,
+			activePlugin: plugin,
+		}))
 	}
-	
+
 	return { plugins, setActivePlugin, activePlugin }
 }
 
 export const useSettingsContext = () => {
 	const { state, setState } = useDevtoolsShellContext()
-	
+
 	const settings = createMemo(() => state.settings)
-	
+
 	const setSettings = (newSettings: Partial<DevtoolsState["settings"]>) => {
-		setState("settings", (prev) => ({ ...prev, ...newSettings }))
+		setState((prev) => ({
+			...prev,
+			settings: {
+				...prev.settings,
+				...newSettings,
+			},
+		}))
 	}
-	
+
 	return { setSettings, settings }
 }
 
 export const usePersistOpen = () => {
 	const { state, setState } = useDevtoolsShellContext()
-	
+
 	const persistOpen = createMemo(() => state.persistOpen)
-	
+
 	const setPersistOpen = (value: boolean) => {
-		setState("persistOpen", value)
+		setState((prev) => ({
+			...prev,
+			persistOpen: value,
+		}))
 	}
-	
+
 	return { persistOpen, setPersistOpen }
 }
 
