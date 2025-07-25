@@ -1,6 +1,5 @@
 import { createSignal, createEffect, onMount } from "solid-js"
 import { Portal } from "solid-js/web"
-import { createKeyHold } from "@solid-primitives/keyboard"
 import { ContentPanel } from "./components/content-panel"
 import { MainPanel } from "./components/main-panel"
 import { Tabs } from "./components/tabs"
@@ -32,19 +31,31 @@ const DevTools = () => {
 		setPersistOpen(!isOpen())
 	}, 100)
 
-	// Handle hotkeys
-	const keys = createKeyHold()
+	// Handle hotkeys with basic keyboard event listeners
 	createEffect(() => {
-		const hotkey = settings().openHotkey
-		const [modifier, key] = hotkey.split('+')
-		
-		if (keys[modifier as keyof typeof keys] && keys[key as keyof typeof keys]) {
-			debounceSetOpen()
+		const handleKeyDown = (e: KeyboardEvent) => {
+			const hotkey = settings().openHotkey
+			const [modifier, key] = hotkey.split('+')
+			
+			// Check for hotkey combination
+			if (
+				((modifier === 'shift' && e.shiftKey) || 
+				 (modifier === 'ctrl' && e.ctrlKey) || 
+				 (modifier === 'alt' && e.altKey)) &&
+				e.key.toLowerCase() === key.toLowerCase()
+			) {
+				e.preventDefault()
+				debounceSetOpen()
+			}
+			
+			// Handle escape key
+			if (e.key === 'Escape' && isOpen()) {
+				debounceSetOpen()
+			}
 		}
 		
-		if (keys.Escape && isOpen()) {
-			debounceSetOpen()
-		}
+		document.addEventListener('keydown', handleKeyDown)
+		return () => document.removeEventListener('keydown', handleKeyDown)
 	})
 
 	useDisableTabbing(isOpen)

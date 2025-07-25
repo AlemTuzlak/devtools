@@ -66,10 +66,7 @@
 		"vitest": "^3.1.1"
 	},
 	"dependencies": {
-		"@kobalte/core": "^0.13.4",
 		"clsx": "^2.1.1",
-		"@solid-primitives/keyboard": "^1.2.8",
-		"@solid-primitives/storage": "^4.2.1",
 		"tailwind-merge": "^3.3.1"
 	}
 }
