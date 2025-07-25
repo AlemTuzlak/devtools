@@ -1,10 +1,10 @@
-import { useEffect, useRef } from "react"
+import { onMount, onCleanup } from "solid-js"
 
 export const useHorizontalScroll = () => {
-	const ref = useRef<HTMLDivElement | null>(null)
+	let ref: HTMLDivElement | undefined
 
-	useEffect(() => {
-		const elem = ref.current
+	onMount(() => {
+		const elem = ref
 		const onWheel = (ev: WheelEvent) => {
 			if (!elem || ev.deltaY === 0) return
 
@@ -16,10 +16,10 @@ export const useHorizontalScroll = () => {
 
 		elem?.addEventListener("wheel", onWheel, { passive: true })
 
-		return () => {
+		onCleanup(() => {
 			elem?.removeEventListener("wheel", onWheel)
-		}
-	}, [])
+		})
+	})
 
 	return ref
 }

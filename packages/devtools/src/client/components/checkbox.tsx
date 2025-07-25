@@ -1,29 +1,31 @@
-interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value"> {
-	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+import { Show } from "solid-js"
+
+interface CheckboxProps {
+	onChange?: (e: Event) => void
 	id: string
-	children: React.ReactNode
+	children: any
 	value?: boolean
 	hint?: string
 }
 
-const Checkbox = ({ onChange, id, children, value, hint, ...props }: CheckboxProps) => {
+const Checkbox = (props: CheckboxProps) => {
 	return (
 		<div>
-			<label className="text-md cursor-pointer" htmlFor={id}>
-				<div className="flex items-center gap-2 py-1">
+			<label class="text-md cursor-pointer" for={props.id}>
+				<div class="flex items-center gap-2 py-1">
 					<input
-						value={value ? "checked" : undefined}
-						checked={value}
-						onChange={onChange}
-						id={id}
+						value={props.value ? "checked" : undefined}
+						checked={props.value}
+						onChange={props.onChange}
+						id={props.id}
 						type="checkbox"
-						{...props}
 					/>
-
-					{children}
+					{props.children}
 				</div>
 			</label>
-			{hint && <p className="text-sm text-gray-500">{hint}</p>}
+			<Show when={props.hint}>
+				<p class="text-sm text-gray-500">{props.hint}</p>
+			</Show>
 		</div>
 	)
 }

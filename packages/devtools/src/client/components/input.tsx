@@ -1,36 +1,45 @@
-import clsx from "clsx"
+import { Show } from "solid-js"
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps {
 	label?: string
 	hint?: string
+	name?: string
+	id?: string
+	value?: string
+	onChange?: (e: Event) => void
+	onBlur?: (e: Event) => void
+	class?: string
 }
 
-export const Label = ({ className, children, ...props }: React.HTMLProps<HTMLLabelElement>) => {
+export const Label = (props: { class?: string; children: any; name?: string }) => {
 	return (
-		<label htmlFor={props.name} className={clsx("block text-white text-sm", className)} {...props}>
-			{children}
+		<label for={props.name} class={`block text-white text-sm ${props.class || ""}`}>
+			{props.children}
 		</label>
 	)
 }
 
-export const Hint = ({ children }: React.HTMLProps<HTMLParagraphElement>) => {
-	return <p className="text-sm text-gray-500">{children}</p>
+export const Hint = (props: { children: any }) => {
+	return <p class="text-sm text-gray-500">{props.children}</p>
 }
 
-export const Input = ({ className, name, label, hint, ...props }: InputProps) => {
+export const Input = (props: InputProps) => {
 	return (
-		<div className="flex w-full flex-col gap-1">
-			{label && <Label htmlFor={name}>{label}</Label>}
+		<div class="flex w-full flex-col gap-1">
+			<Show when={props.label}>
+				<Label name={props.name}>{props.label}</Label>
+			</Show>
 			<input
-				name={name}
-				id={name}
-				className={clsx(
-					"w-full rounded transition-all text-white border border-gray-400 hover:border-gray-400/50 bg-[#121212] px-2 py-1 text-sm",
-					className
-				)}
-				{...props}
+				name={props.name}
+				id={props.id}
+				class={`w-full rounded transition-all text-white border border-gray-400 hover:border-gray-400/50 bg-[#121212] px-2 py-1 text-sm ${props.class || ""}`}
+				value={props.value}
+				onChange={props.onChange}
+				onBlur={props.onBlur}
 			/>
-			{hint && <Hint>{hint}</Hint>}
+			<Show when={props.hint}>
+				<Hint>{props.hint}</Hint>
+			</Show>
 		</div>
 	)
 }

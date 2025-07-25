@@ -1,4 +1,4 @@
-import type { JSX } from "react"
+import type { JSX } from "solid-js"
 import { PagesTab } from "./plugins-tab"
 import { SettingsTab } from "./settings-tab"
 
@@ -8,7 +8,6 @@ export const tabs = [
 		name: "Pages",
 		component: <PagesTab />,
 		icon: (
-			// biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="24"
@@ -16,9 +15,9 @@ export const tabs = [
 				viewBox="0 0 24 24"
 				fill="none"
 				stroke="currentColor"
-				strokeWidth="2"
-				strokeLinecap="round"
-				strokeLinejoin="round"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
 			>
 				<path d="M8 6h10" />
 				<path d="M6 12h9" />
@@ -28,9 +27,7 @@ export const tabs = [
 	},
 	{
 		name: "Settings",
-
 		icon: (
-			// biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="24"
@@ -38,9 +35,9 @@ export const tabs = [
 				viewBox="0 0 24 24"
 				fill="none"
 				stroke="currentColor"
-				strokeWidth="2"
-				strokeLinecap="round"
-				strokeLinejoin="round"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
 			>
 				<path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z" />
 				<path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />

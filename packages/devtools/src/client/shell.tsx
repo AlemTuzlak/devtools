@@ -1,16 +1,16 @@
-import { useState } from "react"
-import { useHotkeys } from "react-hotkeys-hook"
+import { createSignal, createEffect, onMount } from "solid-js"
+import { Portal } from "solid-js/web"
+import { createKeyHold } from "@solid-primitives/keyboard"
 import { ContentPanel } from "./components/content-panel"
 import { MainPanel } from "./components/main-panel"
 import { Tabs } from "./components/tabs"
 import { Trigger } from "./components/trigger"
 import { type ShellClientConfig, ShellContextProvider } from "./context/shell-context"
 import { usePersistOpen, useSettingsContext } from "./context/use-devtools-shell-context"
-import { useDebounce } from "./hooks/use-debounce"
+import { createDebounce } from "./hooks/use-debounce"
 import { useDisableTabbing } from "./hooks/use-disable-tabbing"
-import { useHydrated } from "./hooks/use-hydrated"
+import { createHydrated } from "./hooks/use-hydrated"
 import "./input.css"
-import { createPortal } from "react-dom"
 import type { Plugin } from "./tabs"
 import { TANSTACK_DEVTOOLS } from "./utils/storage"
 
@@ -25,23 +25,40 @@ const DevTools = () => {
 	const { settings } = useSettingsContext()
 	const { persistOpen } = usePersistOpen()
 
-	const [isOpen, setIsOpen] = useState(settings.defaultOpen || persistOpen)
+	const [isOpen, setIsOpen] = createSignal(settings().defaultOpen || persistOpen())
 
-	const debounceSetOpen = useDebounce(() => {
-		setIsOpen(!isOpen)
-		setPersistOpen(!isOpen)
+	const debounceSetOpen = createDebounce(() => {
+		setIsOpen(!isOpen())
+		setPersistOpen(!isOpen())
 	}, 100)
-	useHotkeys(settings.openHotkey, () => debounceSetOpen())
-	useHotkeys("esc", () => (isOpen ? debounceSetOpen() : null))
+
+	// Handle hotkeys
+	const keys = createKeyHold()
+	createEffect(() => {
+		const hotkey = settings().openHotkey
+		const [modifier, key] = hotkey.split('+')
+		
+		if (keys[modifier as keyof typeof keys] && keys[key as keyof typeof keys]) {
+			debounceSetOpen()
+		}
+		
+		if (keys.Escape && isOpen()) {
+			debounceSetOpen()
+		}
+	})
+
 	useDisableTabbing(isOpen)
-	if (settings.requireUrlFlag && typeof window !== "undefined" && !window.location.href.includes(settings.urlFlag))
-		return null
+	
+	createEffect(() => {
+		if (settings().requireUrlFlag && typeof window !== "undefined" && !window.location.href.includes(settings().urlFlag))
+			return null
+	})
 
 	return (
-		<div data-testid={TANSTACK_DEVTOOLS} id={TANSTACK_DEVTOOLS} className="tanstack-dev-tools tanstack-dev-tools-reset">
-			<Trigger isOpen={isOpen} setIsOpen={setIsOpen} />
-			<MainPanel isOpen={isOpen}>
-				<div className="flex h-full">
+		<div data-testid={TANSTACK_DEVTOOLS} id={TANSTACK_DEVTOOLS} class="tanstack-dev-tools tanstack-dev-tools-reset">
+			<Trigger isOpen={isOpen()} setIsOpen={setIsOpen} />
+			<MainPanel isOpen={isOpen()}>
+				<div class="flex h-full">
 					<Tabs setIsOpen={setIsOpen} />
 					<ContentPanel />
 				</div>
@@ -49,12 +66,17 @@ const DevTools = () => {
 		</div>
 	)
 }
-export const Shell = ({ plugins, config }: TanstackDevtoolsProps) => {
-	const hydrated = useHydrated()
-	if (!hydrated) return null // Prevent rendering until hydrated
+
+export const Shell = (props: TanstackDevtoolsProps) => {
+	const hydrated = createHydrated()
+	
 	return (
-		<ShellContextProvider plugins={plugins} config={config}>
-			{createPortal(<DevTools />, document.body)}
-		</ShellContextProvider>
+		<Show when={hydrated()}>
+			<ShellContextProvider plugins={props.plugins} config={props.config}>
+				<Portal>
+					<DevTools />
+				</Portal>
+			</ShellContextProvider>
+		</Show>
 	)
 }
