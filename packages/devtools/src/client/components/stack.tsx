@@ -1,7 +1,9 @@
 import clsx from "clsx"
+import { JSX } from "solid-js"
 
-interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
+interface StackProps extends JSX.HTMLAttributes<HTMLDivElement> {
 	gap?: "sm" | "md" | "lg"
+	children: JSX.Element
 }
 
 const GAPS = {
@@ -10,10 +12,10 @@ const GAPS = {
 	lg: "gap-4",
 }
 
-const Stack = ({ gap = "md", className, children, ...props }: StackProps) => {
+const Stack = (props: StackProps) => {
 	return (
-		<div className={clsx("flex flex-col", GAPS[gap], className)} {...props}>
-			{children}
+		<div class={clsx("flex flex-col", GAPS[props.gap || "md"], props.class)} {...props}>
+			{props.children}
 		</div>
 	)
 }

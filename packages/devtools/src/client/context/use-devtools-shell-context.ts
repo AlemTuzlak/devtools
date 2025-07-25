@@ -1,71 +1,59 @@
-import { useCallback, useContext } from "react"
+import { useContext, createMemo } from "solid-js"
 import type { Plugin } from "../tabs/index.js"
 import { ShellContext } from "./shell-context.js"
 import type { DevtoolsState } from "./shell-reducer.js"
 
 /**
- * Returns an object containing the current state and dispatch function of the RDTContext.
- * Throws an error if used outside of a RDTContextProvider.
- * - Saves the state to session storage on every state change.
- * - Saves the settings to local storage on every settings state change.
- * @returns {Object} An object containing the following properties:
- *  - dispatch: A function to dispatch actions to the RDTContext reducer.
- *  - state: The current state of the RDTContext.
+ * Returns an object containing the current state and setState function of the ShellContext.
+ * Throws an error if used outside of a ShellContextProvider.
  */
 const useDevtoolsShellContext = () => {
 	const context = useContext(ShellContext)
 	if (context === undefined) {
-		throw new Error("useRDTContext must be used within a RDTContextProvider")
+		throw new Error("useDevtoolsShellContext must be used within a ShellContextProvider")
 	}
-	const { state, dispatch } = context
-	return {
-		dispatch,
-		state,
-	}
+	return context
 }
 
 export const usePlugins = () => {
-	const { state, dispatch } = useDevtoolsShellContext()
-	const { plugins, activePlugin } = state
-	const setActivePlugin = useCallback(
-		(plugin: Plugin) => {
-			dispatch({
-				type: "SET_ACTIVE_PLUGIN",
-				payload: plugin,
-			})
-		},
-		[dispatch]
-	)
+	const { state, setState } = useDevtoolsShellContext()
+	
+	const plugins = createMemo(() => state().plugins)
+	const activePlugin = createMemo(() => state().activePlugin)
+	
+	const setActivePlugin = (plugin: Plugin) => {
+		setState({ activePlugin: plugin })
+	}
+	
 	return { plugins, setActivePlugin, activePlugin }
 }
 
 export const useSettingsContext = () => {
-	const { dispatch, state } = useDevtoolsShellContext()
-	const { settings } = state
-	const setSettings = useCallback(
-		(settings: Partial<DevtoolsState["settings"]>) => {
-			dispatch({
-				type: "SET_SETTINGS",
-				payload: settings,
-			})
-		},
-		[dispatch]
-	)
+	const { state, setState } = useDevtoolsShellContext()
+	
+	const settings = createMemo(() => state().settings)
+	
+	const setSettings = (newSettings: Partial<DevtoolsState["settings"]>) => {
+		setState({
+			settings: {
+				...state().settings,
+				...newSettings,
+			},
+		})
+	}
+	
 	return { setSettings, settings }
 }
 
 export const usePersistOpen = () => {
-	const { dispatch, state } = useDevtoolsShellContext()
-	const { persistOpen } = state
-	const setPersistOpen = useCallback(
-		(persistOpen: boolean) => {
-			dispatch({
-				type: "SET_PERSIST_OPEN",
-				payload: persistOpen,
-			})
-		},
-		[dispatch]
-	)
+	const { state, setState } = useDevtoolsShellContext()
+	
+	const persistOpen = createMemo(() => state().persistOpen)
+	
+	const setPersistOpen = (persistOpen: boolean) => {
+		setState({ persistOpen })
+	}
+	
 	return { persistOpen, setPersistOpen }
 }
 

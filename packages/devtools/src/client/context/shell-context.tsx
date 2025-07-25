@@ -1,6 +1,5 @@
-import type { Dispatch } from "react"
-import type React from "react"
-import { createContext, useEffect, useMemo, useReducer } from "react"
+import { createContext, createEffect, useContext, JSX, Accessor } from "solid-js"
+import { createStore } from "solid-js/store"
 
 import type { TanstackDevtoolsProps } from "../shell.js"
 import { tryParseJson } from "../utils/sanitize.js"
@@ -10,17 +9,15 @@ import {
 	getStorageItem,
 	setStorageItem,
 } from "../utils/storage.js"
-import { type DevtoolsState, type ReactRouterDevtoolsActions, initialState, shellReducer } from "./shell-reducer.js"
+import { type DevtoolsState, initialState } from "./shell-reducer.js"
 
 export const ShellContext = createContext<{
-	state: DevtoolsState
-	dispatch: Dispatch<ReactRouterDevtoolsActions>
-}>({ state: initialState, dispatch: () => null })
-
-ShellContext.displayName = "ShellContext"
+	state: Accessor<DevtoolsState>
+	setState: (updates: Partial<DevtoolsState>) => void
+}>()
 
 interface ContextProps {
-	children: React.ReactNode
+	children: JSX.Element
 	plugins?: TanstackDevtoolsProps["plugins"]
 	config?: ShellClientConfig
 }
@@ -64,18 +61,21 @@ export type ShellClientConfig = Pick<
 	| "urlFlag"
 >
 
-export const ShellContextProvider = ({ children, plugins, config }: ContextProps) => {
-	const [state, dispatch] = useReducer(shellReducer, getExistingStateFromStorage(config, plugins))
-	// biome-ignore lint/correctness/useExhaustiveDependencies: investigate
-	const value = useMemo(() => ({ state, dispatch }), [state, dispatch])
+export const ShellContextProvider = (props: ContextProps) => {
+	const [state, setState] = createStore(getExistingStateFromStorage(props.config, props.plugins))
 
-	useEffect(() => {
+	createEffect(() => {
 		const { settings, activePlugin, plugins, ...rest } = state
 		// Store user settings for dev tools into local storage
 		setStorageItem(TANSTACK_DEVTOOLS_SETTINGS, JSON.stringify(settings))
 		// Store general state into local storage
 		setStorageItem(TANSTACK_DEVTOOLS_STATE, JSON.stringify(rest))
-	}, [state])
+	})
 
-	return <ShellContext.Provider value={value}>{children}</ShellContext.Provider>
+	const contextValue = {
+		state: () => state,
+		setState: (updates: Partial<DevtoolsState>) => setState(updates),
+	}
+
+	return <ShellContext.Provider value={contextValue}>{props.children}</ShellContext.Provider>
 }
