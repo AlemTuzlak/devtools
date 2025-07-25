@@ -11,21 +11,19 @@
 		"./input.css": "./dist/index.css",
 		".": {
 			"import": {
-				"types": "./dist/index.d.ts",
-				"import": "./dist/index.js",
-				"default": "./dist/index.js"
+				"types": "./dist/esm/index.d.ts",
+				"default": "./dist/esm/index.js"
 			},
 			"require": {
-				"types": "./dist/index.d.cts",
-				"import": "./dist/index.cjs",
-				"require": "./dist/index.cjs"
+				"types": "./dist/cjs/index.d.cts",
+				"default": "./dist/cjs/index.cjs"
 			}
 		}
 	},
 	"scripts": {
 		"test:cov": "vitest run --coverage",
-		"build": "tsdown src/index.ts --config tsdown.config.ts --clean",
-		"dev": "tsdown src/index.ts --config tsdown.config.ts --watch",
+		"build": "vite build",
+		"dev": "vite dev",
 		"prepublishOnly": "pnpm run build",
 		"typecheck": "tsc",
 		"validate": "pnpm run check && pnpm run typecheck && pnpm run test",
