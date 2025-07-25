@@ -18,13 +18,6 @@ export default defineConfig({
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		}) as any,
 	],
-	noExternal: ["solid-js"],
 	format: ["esm", "cjs"],
 	outDir: "dist",
-	inputOptions: {
-		jsx: "preserve",
-	},
-	outputOptions: {
-		inlineDynamicImports: true,
-	},
 })
